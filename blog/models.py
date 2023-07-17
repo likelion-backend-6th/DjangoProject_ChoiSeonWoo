@@ -31,6 +31,9 @@ class Post(models.Model):
         default=Status.DRAFT
     )
 
+    objects = models.Manager()  # 기본 매니저
+    published = PublishedManager()  # 사용자 정의 매니저
+
     class Meta:
         ordering = ['-publish']
         indexes = [
