@@ -65,7 +65,7 @@ def post_share(request, post_id):
             post_url = request.build_absolute_uri(
                 post.get_absolute_url())
             subject = f"{cd['name']}님이 {post.title}을(를) 추천합니다."
-            message = f"{post.title}을(를) 다음에서 읽어보세요.\n\n" \
+            message = f"{post.title}을(를) {post_url}에서 읽어보세요.\n\n" \
                       f"{cd['name']}의 의견: {cd['comments']}"
             send_mail(subject, message, 'your_account@gmail.com',
                       [cd['to']])
