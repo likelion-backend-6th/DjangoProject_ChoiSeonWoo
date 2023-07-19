@@ -1,8 +1,11 @@
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404
+from django.views.generic import ListView
+
 from .models import Post
 
 
+# FBV
 def post_list(request):
     post_list = Post.published.all()
     # 페이지당 3개의 게시물로 페이지네이션
@@ -22,6 +25,17 @@ def post_list(request):
     return render(request,
                   'blog/post/list.html',
                   {'posts': posts})
+
+
+# CBV
+class PostListView(ListView):
+    """
+    대체 글 목록 뷰
+    """
+    queryset = Post.published.all()
+    context_object_name = 'posts'
+    paginate_by = 3
+    template_name = 'blog/post/list.html'
 
 
 def post_detail(request, year, month, day, post):
