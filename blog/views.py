@@ -1,3 +1,4 @@
+from django.core.mail import send_mail
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView
@@ -54,14 +55,21 @@ def post_detail(request, year, month, day, post):
 def post_share(request, post_id):
     # id로 글 검색
     post = get_object_or_404(Post, id=post_id, status=Post.Status.PUBLISHED)
-
+    sent = False
     if request.method == 'POST':
         # 폼이 제출되었습니다.
         form = EmailPostForm(request.POST)
         if form.is_valid():
-            # 폼 필드가 유효한 경우
+            # 폼 필드가 유효성 검사를 통과
             cd = form.cleaned_data
-            # ... 이메일 전송
+            post_url = request.build_absolute_uri(
+                post.get_absolute_url())
+            subject = f"{cd['name']}님이 {post.title}을(를) 추천합니다."
+            message = f"{post.title}을(를) 다음에서 읽어보세요.\n\n" \
+                      f"{cd['name']}의 의견: {cd['comments']}"
+            send_mail(subject, message, 'your_account@gmail.com',
+                      [cd['to']])
+            sent = True
 
     else:
         form = EmailPostForm()
