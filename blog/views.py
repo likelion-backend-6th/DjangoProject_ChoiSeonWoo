@@ -1,4 +1,4 @@
-from django.core.paginator import Paginator, EmptyPage
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404
 from .models import Post
 
@@ -12,6 +12,9 @@ def post_list(request):
 
     try:
         posts = paginator.page(page_number)
+    except PageNotAnInteger:
+        # page_number가 정수가 아닌 경우 첫 번째 페이지 제공
+        posts = paginator.page(1)
     except EmptyPage:
         # page_number가 범위를 벗어난 경우 결과의 마지막 페이지 제공
         posts = paginator.page(paginator.num_pages)
