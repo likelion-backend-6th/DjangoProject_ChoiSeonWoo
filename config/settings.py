@@ -146,6 +146,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'   # 메일을 발송하지 않고 콘솔 창에 출력
 EMAIL_HOST = secrets["GMAIL"]["default"]["EMAIL_HOST"]
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
