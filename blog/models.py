@@ -3,6 +3,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
+from taggit.managers import TaggableManager
 
 
 class PublishedManager(models.Manager):
@@ -32,6 +33,7 @@ class Post(models.Model):
         choices=Status.choices,
         default=Status.DRAFT
     )
+    tags = TaggableManager()
 
     objects = models.Manager()  # 기본 매니저
     published = PublishedManager()  # 사용자 정의 매니저
