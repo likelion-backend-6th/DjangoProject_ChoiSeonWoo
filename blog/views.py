@@ -9,8 +9,13 @@ from .forms import EmailPostForm, CommentForm
 
 
 # FBV
-def post_list(request):
+def post_list(request, tag_slug=None):
     post_list = Post.published.all()
+    tag = None
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        post_list = post_list.filter(tags__in=[tag])
+
     # 페이지당 3개의 게시물로 페이지네이션
     per_page = request.GET.get('per_page', 3)
     paginator = Paginator(post_list, per_page, orphans=1)
@@ -27,7 +32,8 @@ def post_list(request):
 
     return render(request,
                   'blog/post/list.html',
-                  {'posts': posts})
+                  {'posts': posts,
+                   'tag': tag})
 
 
 # CBV
