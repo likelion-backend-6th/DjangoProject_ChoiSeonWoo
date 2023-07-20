@@ -54,6 +54,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Thrid-party Apps
+    'taggit',
+
     # Custom Apps,
     'blog.apps.BlogConfig'
 ]
