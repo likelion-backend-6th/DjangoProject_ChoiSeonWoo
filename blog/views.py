@@ -5,7 +5,7 @@ from django.views.decorators.http import require_POST
 from django.views.generic import ListView
 
 from .models import Post
-from .forms import EmailPostForm
+from .forms import EmailPostForm, CommentForm
 
 
 # FBV
@@ -48,9 +48,18 @@ def post_detail(request, year, month, day, post):
                              publish__year=year,
                              publish__month=month,
                              publish__day=day)
+
+    # List of active comments for this post
+    comments = post.comments.filter(active=True)
+
+    # Form for users to comment
+    form = CommentForm()
+
     return render(request,
-                    'blog/post/detail.html',
-                    {'post': post})
+                  'blog/post/detail.html',
+                  {'post': post,
+                   'comments': comments,
+                   'form': form})
 
 
 def post_share(request, post_id):
