@@ -3,6 +3,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.views.generic import ListView
+from taggit.models import Tag
 
 from .models import Post
 from .forms import EmailPostForm, CommentForm
@@ -41,10 +42,32 @@ class PostListView(ListView):
     """
     대체 글 목록 뷰
     """
-    queryset = Post.published.all()
     context_object_name = 'posts'
     paginate_by = 3
     template_name = 'blog/post/list.html'
+
+    def get_queryset(self):
+        # Get the tag_slug from URL parameter if exists
+        tag_slug = self.kwargs.get('tag_slug')
+        queryset = Post.published.all()
+
+        if tag_slug:
+            tag = get_object_or_404(Tag, slug=tag_slug)
+            queryset = queryset.filter(tags__in=[tag])
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Get the tag_slug from URL parameter if exists
+        tag_slug = self.kwargs.get('tag_slug')
+        tag = None
+
+        if tag_slug:
+            tag = get_object_or_404(Tag, slug=tag_slug)
+
+        context['tag'] = tag
+        return context
 
 
 def post_detail(request, year, month, day, post):
