@@ -159,10 +159,13 @@ def post_search(request):
     if 'query' in request.GET:
         form = SearchForm(request.GET)
         if form.is_valid():
-            query = form.cleaned_data['query']
+            query = form.cleaned_data["query"]
+            query_list = query.split()
             results = Post.published.annotate(
-                search=SearchVector('title', 'body'),
-            ).filter(search=query)
+                search=SearchVector("title", "body", "tags__name"),
+            )
+            for q in query_list:
+                results = results.filter(search__contains=q)
     return render(request,
                   'blog/post/search.html',
                   {'form': form,
