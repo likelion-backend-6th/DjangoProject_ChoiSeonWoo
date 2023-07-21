@@ -1,3 +1,4 @@
+from django.contrib.postgres.search import SearchVector
 from django.core.mail import send_mail
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
@@ -7,7 +8,7 @@ from django.views.generic import ListView
 from taggit.models import Tag
 
 from .models import Post
-from .forms import EmailPostForm, CommentForm
+from .forms import EmailPostForm, CommentForm, SearchForm
 
 
 # FBV
@@ -149,3 +150,21 @@ def post_comment(request, post_id):
                   {'post': post,
                    'form': form,
                    'comment': comment})
+
+
+def post_search(request):
+    form = SearchForm()
+    query = None
+    results = []
+    if 'query' in request.GET:
+        form = SearchForm(request.GET)
+        if form.is_valid():
+            query = form.cleaned_data['query']
+            results = Post.published.annotate(
+                search=SearchVector('title', 'body'),
+            ).filter(search=query)
+    return render(request,
+                  'blog/post/search.html',
+                  {'form': form,
+                   'query': query,
+                   'results': results})
